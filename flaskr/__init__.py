@@ -1,15 +1,29 @@
+import atexit
+import logging
 import os
 
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.interval import IntervalTrigger
 from flask import Flask
 from flask_migrate import Migrate
 
+from flaskr.db import db
+from flaskr.ma import ma
 from flaskr.models import Room, Item, Category
 from flaskr.routes.health import health_bp
 from flaskr.routes.items import items_bp
 from flaskr.routes.rooms import rooms_bp
-from .models import db
+from flaskr.scheduler import delete_inactive_rooms, delete_soft_deleted_rooms
 
 migrate = Migrate()
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+
+apscheduler_logger = logging.getLogger('apscheduler')
+apscheduler_logger.setLevel(logging.WARNING)
 
 
 def create_app(test_config=None):
@@ -37,9 +51,32 @@ def create_app(test_config=None):
 
     db.init_app(app)
     migrate.init_app(app, db)
+    ma.init_app(app)
 
     app.register_blueprint(health_bp)
     app.register_blueprint(rooms_bp)
     app.register_blueprint(items_bp)
 
+    configure_schedulers(app)
+
     return app
+
+
+def configure_schedulers(app):
+    scheduler = BackgroundScheduler()
+    scheduler.start()
+
+    scheduler.add_job(
+        func=lambda: delete_inactive_rooms(app),
+        trigger=IntervalTrigger(hours=3),
+        id='delete_inactive_rooms',
+        replace_existing=True
+    )
+    scheduler.add_job(
+        func=lambda: delete_soft_deleted_rooms(app),
+        trigger=IntervalTrigger(days=1),
+        id='delete_soft_deleted_rooms',
+        replace_existing=True
+    )
+
+    atexit.register(lambda: scheduler.shutdown())

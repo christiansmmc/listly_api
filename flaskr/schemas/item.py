@@ -1,5 +1,5 @@
-from flaskr import Item
-from flaskr.ma import ma
+from flaskr.config.ma import ma
+from flaskr.models import Item
 
 
 class ItemListResponseSchema(ma.SQLAlchemySchema):

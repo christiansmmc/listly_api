@@ -5,17 +5,14 @@ import os
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from flask import Flask
-from flask_migrate import Migrate
+from flask_cors import CORS
 
-from flaskr.db import db
-from flaskr.ma import ma
-from flaskr.models import Room, Item, Category
+from flaskr.config import db, migration, ma
+from flaskr.error_handler import configure_error_handlers
 from flaskr.routes.health import health_bp
 from flaskr.routes.items import items_bp
 from flaskr.routes.rooms import rooms_bp
 from flaskr.scheduler import delete_inactive_rooms, delete_soft_deleted_rooms
-
-migrate = Migrate()
 
 logging.basicConfig(
     level=logging.INFO,
@@ -27,7 +24,6 @@ apscheduler_logger.setLevel(logging.WARNING)
 
 
 def create_app(test_config=None):
-    # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
 
     app.config.from_mapping(
@@ -37,29 +33,35 @@ def create_app(test_config=None):
     )
 
     if test_config is None:
-        # load the instance config, if it exists, when not testing
         app.config.from_pyfile('config.py', silent=True)
     else:
-        # load the test config if passed in
         app.config.from_mapping(test_config)
 
-    # ensure the instance folder exists
     try:
         os.makedirs(app.instance_path)
     except OSError:
         pass
 
-    db.init_app(app)
-    migrate.init_app(app, db)
-    ma.init_app(app)
+    CORS(app)
 
-    app.register_blueprint(health_bp)
-    app.register_blueprint(rooms_bp)
-    app.register_blueprint(items_bp)
-
+    configure_extensions(app)
+    register_blueprints(app)
+    configure_error_handlers(app)
     configure_schedulers(app)
 
     return app
+
+
+def configure_extensions(app):
+    db.init_app(app)
+    migration.init_app(app)
+    ma.init_app(app)
+
+
+def register_blueprints(app):
+    app.register_blueprint(health_bp)
+    app.register_blueprint(rooms_bp)
+    app.register_blueprint(items_bp)
 
 
 def configure_schedulers(app):

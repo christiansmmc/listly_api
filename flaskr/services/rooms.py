@@ -1,8 +1,9 @@
 import logging
 from datetime import timedelta
 
+from flask import abort
+
 from flaskr.models import Room
-from flaskr.schemas.error import ErrorSchema
 from flaskr.utils import get_current_time, get_4_digits_code
 
 
@@ -41,17 +42,9 @@ class RoomService:
         room = Room.query.filter_by(code=code, passcode=passcode, active=True).first()
 
         if not room:
-            error_schema = ErrorSchema()
-            return error_schema.dump({
-                "status": 404,
-                "message": "Room not found"
-            }), 400
+            abort(404, "Room not found")
 
         if not room.active or room.deleted_at is not None:
-            error_schema = ErrorSchema()
-            return error_schema.dump({
-                "status": 400,
-                "message": "Room is not active"
-            }), 400
+            abort(400, "Room is not active")
 
         return room

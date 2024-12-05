@@ -1,4 +1,4 @@
-from flaskr.db import db
+from flaskr.config.db import db
 from flaskr.utils import get_current_time
 
 

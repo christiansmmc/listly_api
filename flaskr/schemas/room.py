@@ -1,6 +1,6 @@
 import re
 
-from flaskr.ma import ma
+from flaskr.config.ma import ma
 from flaskr.models import Room
 from flaskr.schemas.item import ItemListResponseSchema
 

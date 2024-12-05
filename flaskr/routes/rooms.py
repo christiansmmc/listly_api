@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, abort
 
 from flaskr.models import Room, Item
 from flaskr.schemas.error import ErrorSchema
@@ -25,27 +25,15 @@ def initial_step_create_room():
 
 @rooms_bp.post('/last-step')
 def last_step_create_room():
-    validation_result = validate_schema(RoomLastStepRequestSchema)
-    if isinstance(validation_result, tuple):
-        return validation_result
-
-    request_body = validation_result
+    request_body = validate_schema(RoomLastStepRequestSchema)
 
     room = Room.query.filter_by(code=request_body['code']).first()
 
     if not room:
-        error_schema = ErrorSchema()
-        return error_schema.dump({
-            "status": 404,
-            "message": "Room not found"
-        }), 400
+        abort(404, description='Room not found')
 
     if room.active:
-        error_schema = ErrorSchema()
-        return error_schema.dump({
-            "status": 400,
-            "message": "Room already created"
-        }), 400
+        abort(400, 'Room already created')
 
     room.passcode = request_body['passcode']
     room.active = True
@@ -143,9 +131,6 @@ def check_item(room_code, item_id):
         return room_passcode
 
     room = RoomService.find_room_by_code(room_code, room_passcode)
-    if isinstance(room, tuple):
-        return room
-
     item = Item.query.filter_by(room_id=room.id, id=item_id).first()
 
     if not item:

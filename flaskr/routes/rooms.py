@@ -1,8 +1,6 @@
 from flask import Blueprint, abort
 
-from flaskr.models import Room, Item
-from flaskr.schemas.error import ErrorSchema
-from flaskr.schemas.item import ItemCreateRequestSchema
+from flaskr.models import Room
 from flaskr.schemas.room import RoomInitialStepResponseSchema, RoomLastStepRequestSchema, RoomPublicSchema, \
     RoomListResponseSchema
 from flaskr.schemas.validation import validate_schema
@@ -71,76 +69,3 @@ def get_room(room_code):
 
     room_schema = RoomListResponseSchema()
     return room_schema.dump(room), 200
-
-
-#
-# ITEMS
-#
-
-@rooms_bp.post('/<string:room_code>/items')
-def add_item(room_code):
-    room_passcode = get_room_passcode_header()
-    if isinstance(room_passcode, tuple):
-        return room_passcode
-
-    request_body = validate_schema(ItemCreateRequestSchema)
-    if isinstance(request_body, tuple):
-        return request_body
-
-    print(room_code, room_passcode)
-
-    room = RoomService.find_room_by_code(room_code, room_passcode)
-    if isinstance(room, tuple):
-        return room
-
-    #     TODO add category
-    item = Item(name=request_body['name'], room_id=room.id)
-    item.save()
-
-    return {}, 201
-
-
-@rooms_bp.delete('/<string:room_code>/items/<int:item_id>')
-def delete_item(room_code, item_id):
-    room_passcode = get_room_passcode_header()
-    if isinstance(room_passcode, tuple):
-        return room_passcode
-
-    room = Room.query.filter_by(code=room_code, passcode=room_passcode).first()
-
-    if not room:
-        return {}, 204
-
-    if not room.active or room.deleted_at is not None:
-        return {}, 204
-
-    item = Item.query.filter_by(room_id=room.id, id=item_id).first()
-
-    if not item:
-        return {}, 204
-
-    item.delete()
-
-    return {}, 204
-
-
-@rooms_bp.patch('/<string:room_code>/items/<int:item_id>')
-def check_item(room_code, item_id):
-    room_passcode = get_room_passcode_header()
-    if isinstance(room_passcode, tuple):
-        return room_passcode
-
-    room = RoomService.find_room_by_code(room_code, room_passcode)
-    item = Item.query.filter_by(room_id=room.id, id=item_id).first()
-
-    if not item:
-        error_schema = ErrorSchema()
-        return error_schema.dump({
-            "status": 404,
-            "message": "Item not found"
-        }), 400
-
-    item.checked = True
-    item.save()
-
-    return {}, 200

@@ -10,7 +10,7 @@ from flask_cors import CORS
 from flaskr.config import db, migration, ma
 from flaskr.error_handler import configure_error_handlers
 from flaskr.routes.health import health_bp
-from flaskr.routes.items import items_bp
+from flaskr.routes.rooms_items import rooms_items_bp
 from flaskr.routes.rooms import rooms_bp
 from flaskr.scheduler import delete_inactive_rooms, delete_soft_deleted_rooms
 
@@ -61,7 +61,7 @@ def configure_extensions(app):
 def register_blueprints(app):
     app.register_blueprint(health_bp)
     app.register_blueprint(rooms_bp)
-    app.register_blueprint(items_bp)
+    app.register_blueprint(rooms_items_bp)
 
 
 def configure_schedulers(app):

@@ -24,7 +24,6 @@ def initial_step_create_room():
 @rooms_bp.post('/last-step')
 def last_step_create_room():
     request_body = validate_schema(RoomLastStepRequestSchema)
-
     room = Room.query.filter_by(code=request_body['code']).first()
 
     if not room:
@@ -44,9 +43,6 @@ def last_step_create_room():
 @rooms_bp.delete('<string:room_code>')
 def delete_room(room_code):
     room_passcode = get_room_passcode_header()
-    if isinstance(room_passcode, tuple):
-        return room_passcode
-
     room = Room.query.filter_by(code=room_code, passcode=room_passcode).first()
 
     if not room:
@@ -60,12 +56,7 @@ def delete_room(room_code):
 @rooms_bp.get('/<string:room_code>')
 def get_room(room_code):
     room_passcode = get_room_passcode_header()
-    if isinstance(room_passcode, tuple):
-        return room_passcode
-
     room = RoomService.find_room_by_code(room_code, room_passcode)
-    if isinstance(room, tuple):
-        return room
 
     room_schema = RoomListResponseSchema()
     return room_schema.dump(room), 200

@@ -1,9 +1,9 @@
-from flask import Blueprint
+from flask import Blueprint, abort
 
 from flaskr.models import Item, Room
-from flaskr.schemas.error import ErrorSchema
 from flaskr.schemas.item import ItemCreateRequestSchema
 from flaskr.schemas.validation import validate_schema
+from flaskr.services.category import CategoryService
 from flaskr.services.rooms import RoomService
 from flaskr.utils import get_room_passcode_header
 
@@ -13,31 +13,22 @@ rooms_items_bp = Blueprint('items', __name__, url_prefix='/api/v1/rooms/<string:
 @rooms_items_bp.post('/items')
 def add_item(room_code):
     room_passcode = get_room_passcode_header()
-    if isinstance(room_passcode, tuple):
-        return room_passcode
 
     request_body = validate_schema(ItemCreateRequestSchema)
-    if isinstance(request_body, tuple):
-        return request_body
-
-    print(room_code, room_passcode)
 
     room = RoomService.find_room_by_code(room_code, room_passcode)
-    if isinstance(room, tuple):
-        return room
-
-    #     TODO add category
     item = Item(name=request_body['name'], room_id=room.id)
+    category = CategoryService.get_category_or_default(request_body['category_id'])
+
+    item.category = category
     item.save()
 
-    return {}, 201
+    return {'id': item.id}, 201
 
 
 @rooms_items_bp.delete('/<int:item_id>')
 def delete_item(room_code, item_id):
     room_passcode = get_room_passcode_header()
-    if isinstance(room_passcode, tuple):
-        return room_passcode
 
     room = Room.query.filter_by(code=room_code, passcode=room_passcode).first()
 
@@ -60,18 +51,12 @@ def delete_item(room_code, item_id):
 @rooms_items_bp.patch('/items/<int:item_id>')
 def check_item(room_code, item_id):
     room_passcode = get_room_passcode_header()
-    if isinstance(room_passcode, tuple):
-        return room_passcode
 
     room = RoomService.find_room_by_code(room_code, room_passcode)
     item = Item.query.filter_by(room_id=room.id, id=item_id).first()
 
     if not item:
-        error_schema = ErrorSchema()
-        return error_schema.dump({
-            "status": 404,
-            "message": "Item not found"
-        }), 400
+        abort(404, description="Item not found")
 
     item.checked = True
     item.save()

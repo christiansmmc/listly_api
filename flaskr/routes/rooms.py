@@ -2,7 +2,7 @@ from flask import Blueprint, abort
 
 from flaskr.models import Room
 from flaskr.schemas.room import RoomInitialStepResponseSchema, RoomLastStepRequestSchema, RoomPublicSchema, \
-    RoomListResponseSchema
+    RoomListResponseSchema, RoomValidateRequestSchema
 from flaskr.schemas.validation import validate_schema
 from flaskr.services.rooms import RoomService
 from flaskr.utils import get_4_digits_code, get_current_time, get_room_passcode_header
@@ -51,6 +51,17 @@ def delete_room(room_code):
     room.deleted_at = get_current_time()
     room.save()
     return {}, 204
+
+
+@rooms_bp.post('/validate')
+def validate_room():
+    request_body = validate_schema(RoomValidateRequestSchema)
+    room = RoomService.find_room_by_code(request_body['code'], request_body['passcode'])
+
+    if not room:
+        abort(404, description='Room not found')
+
+    return {}, 200
 
 
 @rooms_bp.get('/<string:room_code>')

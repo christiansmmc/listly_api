@@ -38,3 +38,11 @@ class RoomListResponseSchema(ma.SQLAlchemySchema):
     code = ma.auto_field()
 
     items = ma.Nested(ItemListResponseSchema, many=True)
+
+
+class RoomValidateRequestSchema(ma.SQLAlchemySchema):
+    class Meta:
+        model = Room
+
+    code = ma.auto_field()
+    passcode = ma.auto_field()

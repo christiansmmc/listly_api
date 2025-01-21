@@ -10,7 +10,7 @@ from flaskr.utils import get_room_passcode_header
 rooms_items_bp = Blueprint('items', __name__, url_prefix='/api/v1/rooms/<string:room_code>/items')
 
 
-@rooms_items_bp.post('/items')
+@rooms_items_bp.post('')
 def add_item(room_code):
     room_passcode = get_room_passcode_header()
 
@@ -18,7 +18,8 @@ def add_item(room_code):
 
     room = RoomService.find_room_by_code(room_code, room_passcode)
     item = Item(name=request_body['name'], room_id=room.id)
-    category = CategoryService.get_category_or_default(request_body['category_id'])
+
+    category = CategoryService.get_category_or_default(request_body.get('category_id'))
 
     item.category = category
     item.save()
@@ -48,7 +49,7 @@ def delete_item(room_code, item_id):
     return {}, 204
 
 
-@rooms_items_bp.patch('/items/<int:item_id>')
+@rooms_items_bp.patch('/<int:item_id>')
 def check_item(room_code, item_id):
     room_passcode = get_room_passcode_header()
 

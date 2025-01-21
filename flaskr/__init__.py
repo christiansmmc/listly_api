@@ -4,14 +4,16 @@ import os
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
+from flasgger import Swagger
 from flask import Flask
 from flask_cors import CORS
 
 from flaskr.config import db, migration, ma
 from flaskr.error_handler import configure_error_handlers
+from flaskr.routes.category import categories_bp
 from flaskr.routes.health import health_bp
-from flaskr.routes.rooms_items import rooms_items_bp
 from flaskr.routes.rooms import rooms_bp
+from flaskr.routes.rooms_items import rooms_items_bp
 from flaskr.scheduler import delete_inactive_rooms, delete_soft_deleted_rooms
 
 logging.basicConfig(
@@ -48,6 +50,7 @@ def create_app(test_config=None):
     register_blueprints(app)
     configure_error_handlers(app)
     configure_schedulers(app)
+    configure_swagger(app)
 
     return app
 
@@ -62,6 +65,7 @@ def register_blueprints(app):
     app.register_blueprint(health_bp)
     app.register_blueprint(rooms_bp)
     app.register_blueprint(rooms_items_bp)
+    app.register_blueprint(categories_bp)
 
 
 def configure_schedulers(app):
@@ -82,3 +86,7 @@ def configure_schedulers(app):
     )
 
     atexit.register(lambda: scheduler.shutdown())
+
+
+def configure_swagger(app):
+    Swagger(app)

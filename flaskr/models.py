@@ -43,6 +43,8 @@ class Item(BaseModel):
     created_at = db.Column(db.DateTime, default=get_current_time)
     deleted_at = db.Column(db.DateTime, nullable=True)
 
+    category = db.relationship('Category', backref='items', lazy=True)
+
 
 class Category(BaseModel):
     __tablename__ = 'category'

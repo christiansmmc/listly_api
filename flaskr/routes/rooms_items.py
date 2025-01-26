@@ -59,7 +59,7 @@ def check_item(room_code, item_id):
     if not item:
         abort(404, description="Item not found")
 
-    item.checked = True
+    item.checked = not item.checked
     item.save()
 
     return {}, 200

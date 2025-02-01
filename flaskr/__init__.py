@@ -2,6 +2,7 @@ import atexit
 import logging
 import os
 
+import pymysql
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from flasgger import Swagger
@@ -15,6 +16,8 @@ from flaskr.routes.health import health_bp
 from flaskr.routes.rooms import rooms_bp
 from flaskr.routes.rooms_items import rooms_items_bp
 from flaskr.scheduler import delete_inactive_rooms, delete_soft_deleted_rooms
+
+pymysql.install_as_MySQLdb()
 
 logging.basicConfig(
     level=logging.INFO,

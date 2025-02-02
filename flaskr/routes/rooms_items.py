@@ -1,22 +1,25 @@
 from flask import Blueprint, abort
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from flaskr.models import Item, Room
 from flaskr.schemas.item import ItemCreateRequestSchema
 from flaskr.schemas.validation import validate_schema
 from flaskr.services.category import CategoryService
 from flaskr.services.rooms import RoomService
-from flaskr.utils import get_room_passcode_header
+from flaskr.utils import validate_jwt_room_code
 
 rooms_items_bp = Blueprint('items', __name__, url_prefix='/api/v1/rooms/<string:room_code>/items')
 
 
+@jwt_required()
 @rooms_items_bp.post('')
 def add_item(room_code):
-    room_passcode = get_room_passcode_header()
+    jwt_room_code = get_jwt_identity()
+    validate_jwt_room_code(jwt_room_code, room_code, 404, "Room not found")
 
     request_body = validate_schema(ItemCreateRequestSchema)
 
-    room = RoomService.find_room_by_code(room_code, room_passcode)
+    room = RoomService.find_room_by_code(jwt_room_code)
     item = Item(name=request_body['name'], room_id=room.id)
 
     category = CategoryService.get_category_or_default(request_body.get('category_id'))
@@ -27,18 +30,13 @@ def add_item(room_code):
     return {'id': item.id}, 201
 
 
+@jwt_required()
 @rooms_items_bp.delete('/<int:item_id>')
 def delete_item(room_code, item_id):
-    room_passcode = get_room_passcode_header()
+    jwt_room_code = get_jwt_identity()
+    validate_jwt_room_code(jwt_room_code, room_code, 404, "Room not found")
 
-    room = Room.query.filter_by(code=room_code, passcode=room_passcode).first()
-
-    if not room:
-        return {}, 204
-
-    if not room.active or room.deleted_at is not None:
-        return {}, 204
-
+    room = RoomService.find_room_by_code(jwt_room_code)
     item = Item.query.filter_by(room_id=room.id, id=item_id).first()
 
     if not item:
@@ -49,11 +47,13 @@ def delete_item(room_code, item_id):
     return {}, 204
 
 
+@jwt_required()
 @rooms_items_bp.patch('/<int:item_id>')
 def check_item(room_code, item_id):
-    room_passcode = get_room_passcode_header()
+    jwt_room_code = get_jwt_identity()
+    validate_jwt_room_code(jwt_room_code, room_code, 404, "Room not found")
 
-    room = RoomService.find_room_by_code(room_code, room_passcode)
+    room = RoomService.find_room_by_code(room_code)
     item = Item.query.filter_by(room_id=room.id, id=item_id).first()
 
     if not item:

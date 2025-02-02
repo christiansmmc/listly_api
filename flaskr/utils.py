@@ -13,11 +13,6 @@ def get_4_digits_code():
     random_4_digits_number = random.randint(1, 9999)
     return str(random_4_digits_number).zfill(4)
 
-
-def get_room_passcode_header():
-    room_passcode = request.headers.get('X-Room-Passcode')
-
-    if not room_passcode:
-        abort(401, description='Not Authorized')
-
-    return room_passcode
+def validate_jwt_room_code(jwt_room_code, url_room_code, error_code, error_message):
+    if jwt_room_code != url_room_code:
+        abort(error_code, error_message)

@@ -38,7 +38,19 @@ class RoomService:
                 return code
 
     @staticmethod
-    def find_room_by_code(code, passcode):
+    def find_room_by_code(code):
+        room = Room.query.filter_by(code=code, active=True).first()
+
+        if not room:
+            abort(404, "Room not found")
+
+        if not room.active or room.deleted_at is not None:
+            abort(400, "Room is not active")
+
+        return room
+
+    @staticmethod
+    def validate_room(code, passcode):
         room = Room.query.filter_by(code=code, passcode=passcode, active=True).first()
 
         if not room:

@@ -1,7 +1,9 @@
 import re
 
+from marshmallow import Schema, fields
+
 from flaskr.config.ma import ma
-from flaskr.models import Room
+from flaskr.models import Room, RoomAccess
 from flaskr.schemas.item import ItemListResponseSchema
 
 
@@ -46,3 +48,15 @@ class RoomValidateRequestSchema(ma.SQLAlchemySchema):
 
     code = ma.auto_field()
     passcode = ma.auto_field()
+
+
+class RoomValidateAccessCodeRequestSchema(Schema):
+    room_code = fields.String(required=True)
+    access_code = fields.String(required=True)
+
+
+class RoomCodeAccessCodeResponseSchema(ma.SQLAlchemySchema):
+    class Meta:
+        model = RoomAccess
+
+    access_code = ma.auto_field()

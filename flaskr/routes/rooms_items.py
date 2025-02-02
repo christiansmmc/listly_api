@@ -1,7 +1,7 @@
 from flask import Blueprint, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
-from flaskr.models import Item, Room
+from flaskr.models import Item
 from flaskr.schemas.item import ItemCreateRequestSchema
 from flaskr.schemas.validation import validate_schema
 from flaskr.services.category import CategoryService
@@ -11,8 +11,8 @@ from flaskr.utils import validate_jwt_room_code
 rooms_items_bp = Blueprint('items', __name__, url_prefix='/api/v1/rooms/<string:room_code>/items')
 
 
-@jwt_required()
 @rooms_items_bp.post('')
+@jwt_required()
 def add_item(room_code):
     jwt_room_code = get_jwt_identity()
     validate_jwt_room_code(jwt_room_code, room_code, 404, "Room not found")
@@ -30,8 +30,8 @@ def add_item(room_code):
     return {'id': item.id}, 201
 
 
-@jwt_required()
 @rooms_items_bp.delete('/<int:item_id>')
+@jwt_required()
 def delete_item(room_code, item_id):
     jwt_room_code = get_jwt_identity()
     validate_jwt_room_code(jwt_room_code, room_code, 404, "Room not found")
@@ -47,8 +47,8 @@ def delete_item(room_code, item_id):
     return {}, 204
 
 
-@jwt_required()
 @rooms_items_bp.patch('/<int:item_id>')
+@jwt_required()
 def check_item(room_code, item_id):
     jwt_room_code = get_jwt_identity()
     validate_jwt_room_code(jwt_room_code, room_code, 404, "Room not found")

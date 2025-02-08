@@ -1,6 +1,7 @@
 import atexit
 import logging
 import os
+from datetime import timedelta
 
 import pymysql
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -8,6 +9,7 @@ from apscheduler.triggers.interval import IntervalTrigger
 from flasgger import Swagger
 from flask import Flask
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager
 
 from flaskr.config import db, migration, ma
 from flaskr.error_handler import configure_error_handlers
@@ -54,6 +56,7 @@ def create_app(test_config=None):
     configure_error_handlers(app)
     configure_schedulers(app)
     configure_swagger(app)
+    configure_jwt(app)
 
     return app
 
@@ -93,3 +96,10 @@ def configure_schedulers(app):
 
 def configure_swagger(app):
     Swagger(app)
+
+
+def configure_jwt(app):
+    app.config['JWT_SECRET_KEY'] = os.getenv("JWT_SECRET_KEY", "default_jwt_secret")
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=365)
+
+    JWTManager(app)

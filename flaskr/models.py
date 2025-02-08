@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from flaskr.config.db import db
 from flaskr.utils import get_current_time
 
@@ -50,3 +52,18 @@ class Category(BaseModel):
     __tablename__ = 'category'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
+
+
+class RoomAccess(BaseModel):
+    __tablename__ = 'room_access'
+
+    id = db.Column(db.Integer, primary_key=True)
+    access_code = db.Column(db.String(6), nullable=False, unique=True)
+    expiration_date = db.Column(
+        db.DateTime,
+        nullable=False,
+        default=lambda: get_current_time() + timedelta(hours=1)
+    )
+    room_id = db.Column(db.Integer, db.ForeignKey('room.id'), nullable=False)
+
+    room = db.relationship('Room', backref='accesses', lazy=True)

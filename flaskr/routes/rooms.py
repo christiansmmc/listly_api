@@ -1,11 +1,13 @@
 from flask import Blueprint, abort
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
-from flaskr.models import Room
+from flaskr.models import Room, RoomAccess
 from flaskr.schemas.room import RoomInitialStepResponseSchema, RoomLastStepRequestSchema, RoomPublicSchema, \
-    RoomListResponseSchema, RoomValidateRequestSchema
+    RoomListResponseSchema, RoomValidateRequestSchema, RoomValidateAccessCodeRequestSchema, \
+    RoomCodeAccessCodeResponseSchema
 from flaskr.schemas.validation import validate_schema
 from flaskr.services.rooms import RoomService
-from flaskr.utils import get_4_digits_code, get_current_time, get_room_passcode_header
+from flaskr.utils import get_4_digits_code, get_current_time, validate_jwt_room_code, get_access_code
 
 rooms_bp = Blueprint('rooms', __name__, url_prefix='/api/v1/rooms')
 
@@ -41,9 +43,13 @@ def last_step_create_room():
 
 
 @rooms_bp.delete('<string:room_code>')
+@jwt_required()
 def delete_room(room_code):
-    room_passcode = get_room_passcode_header()
-    room = Room.query.filter_by(code=room_code, passcode=room_passcode).first()
+    jwt_room_code = get_jwt_identity()
+
+    validate_jwt_room_code(jwt_room_code, room_code, 204, None)
+
+    room = Room.query.filter_by(code=jwt_room_code).first()
 
     if not room:
         return {}, 204
@@ -56,18 +62,42 @@ def delete_room(room_code):
 @rooms_bp.post('/validate')
 def validate_room():
     request_body = validate_schema(RoomValidateRequestSchema)
-    room = RoomService.find_room_by_code(request_body['code'], request_body['passcode'])
+    room = RoomService.validate_room(request_body['code'], request_body['passcode'])
 
-    if not room:
-        abort(404, description='Room not found')
+    access_token = create_access_token(identity=room.code)
+    return {"access_token": access_token}, 200
 
-    return {}, 200
+
+@rooms_bp.post('/validate/access-code')
+def validate_room_access_code():
+    request_body = validate_schema(RoomValidateAccessCodeRequestSchema)
+    room = RoomService.validate_room_access_code(request_body['room_code'], request_body['access_code'])
+
+    access_token = create_access_token(identity=room.code)
+    return {"access_token": access_token}, 200
 
 
 @rooms_bp.get('/<string:room_code>')
+@jwt_required()
 def get_room(room_code):
-    room_passcode = get_room_passcode_header()
-    room = RoomService.find_room_by_code(room_code, room_passcode)
+    jwt_room_code = get_jwt_identity()
+    validate_jwt_room_code(jwt_room_code, room_code, 404, "Room not found")
+
+    room = RoomService.find_room_by_code(jwt_room_code)
 
     room_schema = RoomListResponseSchema()
     return room_schema.dump(room), 200
+
+
+@rooms_bp.get('/<string:room_code>/generate-access-code')
+@jwt_required()
+def generate_access_code(room_code):
+    jwt_room_code = get_jwt_identity()
+    validate_jwt_room_code(jwt_room_code, room_code, 404, "Room not found")
+
+    room = RoomService.find_room_by_code(jwt_room_code)
+    room_access = RoomAccess(access_code=get_access_code(), room=room)
+    room_access.save()
+
+    room_access_schema = RoomCodeAccessCodeResponseSchema()
+    return room_access_schema.dump(room_access), 200

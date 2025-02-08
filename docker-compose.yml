@@ -7,9 +7,9 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: listly
       MYSQL_USER: listly
       MYSQL_PASSWORD: listly
+      MYSQL_DATABASE: listly
     ports:
       - "3306:3306"
     volumes:

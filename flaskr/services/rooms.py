@@ -3,7 +3,7 @@ from datetime import timedelta
 
 from flask import abort
 
-from flaskr.models import Room
+from flaskr.models import Room, RoomAccess
 from flaskr.utils import get_current_time, get_4_digits_code
 
 
@@ -38,7 +38,19 @@ class RoomService:
                 return code
 
     @staticmethod
-    def find_room_by_code(code, passcode):
+    def find_room_by_code(code):
+        room = Room.query.filter_by(code=code, active=True).first()
+
+        if not room:
+            abort(404, "Room not found")
+
+        if not room.active or room.deleted_at is not None:
+            abort(400, "Room is not active")
+
+        return room
+
+    @staticmethod
+    def validate_room(code, passcode):
         room = Room.query.filter_by(code=code, passcode=passcode, active=True).first()
 
         if not room:
@@ -48,3 +60,18 @@ class RoomService:
             abort(400, "Room is not active")
 
         return room
+
+    @staticmethod
+    def validate_room_access_code(code, access_code):
+        room_access = RoomAccess.query.join(Room).filter(
+            Room.code == code,
+            RoomAccess.access_code == access_code,
+            RoomAccess.expiration_date > get_current_time(),
+            Room.active == True,
+            Room.deleted_at.is_(None)
+        ).first()
+
+        if not room_access:
+            abort(404, "Room access not found or expired")
+
+        return room_access.room

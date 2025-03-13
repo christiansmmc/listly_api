@@ -19,7 +19,7 @@ from flaskr.routes.rooms import rooms_bp
 from flaskr.routes.rooms_items import rooms_items_bp
 from flaskr.scheduler import delete_inactive_rooms, delete_soft_deleted_rooms
 
-pymysql.install_as_MySQLdb()
+# pymysql.install_as_MySQLdb()
 
 logging.basicConfig(
     level=logging.INFO,

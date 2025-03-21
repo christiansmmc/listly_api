@@ -1,19 +1,18 @@
 version: '3.8'
 
 services:
-  db:
-    image: mysql:8.0
-    container_name: listly-db
-    restart: always
+  postgres:
+    image: postgres:16
+    container_name: listly
+    restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_USER: listly
-      MYSQL_PASSWORD: listly
-      MYSQL_DATABASE: listly
+      POSTGRES_USER: listly
+      POSTGRES_PASSWORD: listly
+      POSTGRES_DB: listly
     ports:
-      - "3306:3306"
+      - "5432:5432"
     volumes:
-      - db_data:/var/lib/mysql
+      - pgdata:/var/lib/postgresql/data
 
 volumes:
-  db_data:
+  pgdata:

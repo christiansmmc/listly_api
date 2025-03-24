@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:16
+    container_name: listly_db
+    environment:
+      - POSTGRES_USER=listly
+      - POSTGRES_PASSWORD=listly
+      - POSTGRES_DB=listly
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:

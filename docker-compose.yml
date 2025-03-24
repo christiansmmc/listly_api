@@ -1,18 +1,38 @@
-version: '3.8'
-
 services:
-  postgres:
+  db:
     image: postgres:16
-    container_name: listly
-    restart: unless-stopped
+    container_name: listly_db
     environment:
-      POSTGRES_USER: listly
-      POSTGRES_PASSWORD: listly
-      POSTGRES_DB: listly
+      - POSTGRES_USER=listly
+      - POSTGRES_PASSWORD=listly
+      - POSTGRES_DB=listly
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U listly -d listly"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  flask_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: listly_app
+    environment:
+      - DATABASE_URL=postgresql://listly:listly@db:5432/listly
+    ports:
+      - "5000:5000"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - .:/app
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      bash -c "flask db upgrade &&
+               gunicorn --bind 0.0.0.0:5000 --workers 4 app:app"
 
 volumes:
-  pgdata:
+  postgres_data:

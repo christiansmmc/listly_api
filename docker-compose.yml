@@ -22,7 +22,7 @@ services:
       dockerfile: Dockerfile
     container_name: listly_app
     environment:
-      - DATABASE_URL=postgresql://listly:listly@db:5432/listly
+      - DATABASE=postgresql://listly:listly@db:5432/listly
     ports:
       - "5000:5000"
     volumes:

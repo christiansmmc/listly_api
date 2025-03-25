@@ -31,7 +31,8 @@ class Room(BaseModel):
         'Item',
         backref='room',
         cascade='all',
-        lazy=True
+        lazy=True,
+        order_by='Item.id'
     )
 
 

@@ -5,6 +5,7 @@ from flask import abort
 
 from flaskr.models import Room, RoomAccess
 from flaskr.utils import get_current_time, get_4_digits_code
+from werkzeug.security import check_password_hash
 
 
 class RoomService:
@@ -58,6 +59,9 @@ class RoomService:
 
         if not room.active or room.deleted_at is not None:
             abort(400, "Room is not active")
+
+        if not check_password_hash(room.passcode, passcode):
+            abort(401, description='Room no found')
 
         return room
 

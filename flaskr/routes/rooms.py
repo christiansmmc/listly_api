@@ -8,6 +8,7 @@ from flaskr.schemas.room import RoomInitialStepResponseSchema, RoomLastStepReque
 from flaskr.schemas.validation import validate_schema
 from flaskr.services.rooms import RoomService
 from flaskr.utils import get_4_digits_code, get_current_time, validate_jwt_room_code, get_access_code
+from werkzeug.security import generate_password_hash
 
 rooms_bp = Blueprint('rooms', __name__, url_prefix='/api/v1/rooms')
 
@@ -34,7 +35,7 @@ def last_step_create_room():
     if room.active:
         abort(400, 'Room already created')
 
-    room.passcode = request_body['passcode']
+    room.passcode = generate_password_hash(request_body['passcode'])
     room.active = True
     room.save()
 

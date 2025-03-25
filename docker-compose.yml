@@ -3,15 +3,15 @@ services:
     image: postgres:16
     container_name: listly_db
     environment:
-      - POSTGRES_USER=listly
-      - POSTGRES_PASSWORD=listly
-      - POSTGRES_DB=listly
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_DB=${DATABASE_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U listly -d listly"]
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -21,8 +21,6 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: listly_app
-    environment:
-      - DATABASE=postgresql://listly:listly@db:5432/listly
     ports:
       - "5000:5000"
     volumes:

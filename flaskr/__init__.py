@@ -50,7 +50,8 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    CORS(app)
+    # Configuração CORS explícita
+    CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
     configure_extensions(app)
     register_blueprints(app)

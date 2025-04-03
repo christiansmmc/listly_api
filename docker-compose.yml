@@ -27,11 +27,11 @@ services:
       db:
         condition: service_healthy
     environment:
-      - DATABASE_USER
-      - DATABASE_PASSWORD
-      - DATABASE_DB
-      - JWT_SECRET_KEY
-      - SECRET_KEY
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_DB: ${DATABASE_DB}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      SECRET_KEY: ${SECRET_KEY}
     command: >
       bash -c "flask db upgrade &&
                gunicorn --bind 0.0.0.0:5000 --workers 4 app:app"

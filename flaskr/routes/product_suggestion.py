@@ -7,7 +7,6 @@ product_suggestions_bp = Blueprint('product_suggestions', __name__, url_prefix='
 
 
 @product_suggestions_bp.get('')
-@jwt_required()
 def get_product_suggestions():
     query_text = request.args.get('q', '')
     limit = request.args.get('limit', 10, type=int)

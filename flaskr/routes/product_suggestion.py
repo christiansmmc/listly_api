@@ -9,7 +9,6 @@ product_suggestions_bp = Blueprint('product_suggestions', __name__, url_prefix='
 @product_suggestions_bp.get('')
 @jwt_required()
 def get_product_suggestions():
-    """Retorna sugestões de produtos baseado no texto de busca."""
     query_text = request.args.get('q', '')
     limit = request.args.get('limit', 10, type=int)
     
@@ -17,4 +16,4 @@ def get_product_suggestions():
         return jsonify([])
     
     suggestions = find_product_suggestions(query_text, limit)
-    return jsonify(product_suggestions_schema.dump(suggestions)) 
+    return product_suggestions_schema.dump(suggestions) 

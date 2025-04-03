@@ -8,5 +8,4 @@ class ProductSuggestionSchema(ma.SQLAlchemyAutoSchema):
         fields = ('name',)
 
 
-product_suggestion_schema = ProductSuggestionSchema()
 product_suggestions_schema = ProductSuggestionSchema(many=True) 

@@ -3,9 +3,9 @@ services:
     image: postgres:16
     container_name: listly_db
     environment:
-      - POSTGRES_USER=${DATABASE_USER}
-      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
-      - POSTGRES_DB=${DATABASE_DB}
+      - POSTGRES_USER=listly
+      - POSTGRES_PASSWORD=listly
+      - POSTGRES_DB=listly
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:

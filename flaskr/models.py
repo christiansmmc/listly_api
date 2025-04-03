@@ -55,6 +55,12 @@ class Category(BaseModel):
     name = db.Column(db.String(255), nullable=False)
 
 
+class ProductSuggestion(BaseModel):
+    __tablename__ = 'product_suggestion'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), nullable=False, unique=True)
+
+
 class RoomAccess(BaseModel):
     __tablename__ = 'room_access'
 

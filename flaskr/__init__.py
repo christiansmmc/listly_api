@@ -51,7 +51,7 @@ def create_app(test_config=None):
         pass
 
     # Configuração CORS explícita
-    CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+    CORS(app, resources={r"/*": {"origins": "https://listlyapp.com.br"}}, supports_credentials=True)
 
     configure_extensions(app)
     register_blueprints(app)

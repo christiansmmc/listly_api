@@ -1,8 +1,8 @@
-"""Initial migration for PostgreSQL
+"""Initial migration
 
-Revision ID: 145155f126e9
+Revision ID: 6a0e771724e9
 Revises: 
-Create Date: 2025-03-12 23:49:11.409740
+Create Date: 2025-04-03 11:05:45.072105
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '145155f126e9'
+revision = '6a0e771724e9'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -23,6 +23,16 @@ def upgrade():
     sa.Column('name', sa.String(length=255), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('product_suggestion',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=255), nullable=False),
+    sa.Column('normalized_name', sa.String(length=255), nullable=False),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('name')
+    )
+    with op.batch_alter_table('product_suggestion', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_product_suggestion_normalized_name'), ['normalized_name'], unique=False)
+
     op.create_table('room',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=255), nullable=False),
@@ -64,5 +74,9 @@ def downgrade():
     op.drop_table('room_access')
     op.drop_table('item')
     op.drop_table('room')
+    with op.batch_alter_table('product_suggestion', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_product_suggestion_normalized_name'))
+
+    op.drop_table('product_suggestion')
     op.drop_table('category')
     # ### end Alembic commands ###

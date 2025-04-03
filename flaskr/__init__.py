@@ -20,7 +20,7 @@ from flaskr.routes.rooms import rooms_bp
 from flaskr.routes.rooms_items import rooms_items_bp
 from flaskr.scheduler import delete_inactive_rooms, delete_soft_deleted_rooms
 
-# pymysql.install_as_MySQLdb()
+pymysql.install_as_MySQLdb()
 
 logging.basicConfig(
     level=logging.INFO,
@@ -55,7 +55,7 @@ def create_app(test_config=None):
         "http://localhost:5173",
         "https://listlyapp.com.br",
     ]}}, supports_credentials=True)
-    
+
     configure_extensions(app)
     register_blueprints(app)
     configure_error_handlers(app)

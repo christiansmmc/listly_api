@@ -1,9 +1,8 @@
-"""
-Seed categories
+"""Seed categories
 
-Revision ID: 2e449db0bd13
-Revises: 145155f126e9
-Create Date: 2025-03-13 16:29:56.226123
+Revision ID: cf9a9f202424
+Revises: 6a0e771724e9
+Create Date: 2025-04-03 11:07:45.522051
 
 """
 import csv
@@ -11,9 +10,9 @@ import csv
 import sqlalchemy as sa
 from alembic import op
 
-# Revision identifiers, used by Alembic
-revision = '2e449db0bd13'
-down_revision = '145155f126e9'
+# revision identifiers, used by Alembic.
+revision = 'cf9a9f202424'
+down_revision = '6a0e771724e9'
 branch_labels = None
 depends_on = None
 
@@ -31,7 +30,6 @@ def load_seed():
 
 
 def upgrade():
-    """Insere ou atualiza os dados das categorias no banco de dados."""
     conn = op.get_bind()
     categories = load_seed()
 
@@ -40,7 +38,7 @@ def upgrade():
             sa.text(
                 """
                 INSERT INTO category (id, name) VALUES (:id, :name)
-                ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name;
+                ON DUPLICATE KEY UPDATE name = VALUES(name);
                 """
             ),
             {"id": category["id"], "name": category["name"]}
@@ -48,6 +46,5 @@ def upgrade():
 
 
 def downgrade():
-    """Remove os registros inseridos na operação de upgrade."""
     conn = op.get_bind()
     conn.execute(sa.text("DELETE FROM category WHERE id BETWEEN 1 AND 14;"))

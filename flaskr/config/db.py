@@ -7,4 +7,4 @@ def init_app(app):
     db.init_app(app)
     app.db = db
 
-    from flaskr.models import Room, Item, Category
+    from flaskr.models import Room, Item, Category, ProductSuggestion

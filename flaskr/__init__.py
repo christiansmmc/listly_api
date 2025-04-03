@@ -15,6 +15,7 @@ from flaskr.config import db, migration, ma
 from flaskr.error_handler import configure_error_handlers
 from flaskr.routes.category import categories_bp
 from flaskr.routes.health import health_bp
+from flaskr.routes.product_suggestion import product_suggestions_bp
 from flaskr.routes.rooms import rooms_bp
 from flaskr.routes.rooms_items import rooms_items_bp
 from flaskr.scheduler import delete_inactive_rooms, delete_soft_deleted_rooms
@@ -72,6 +73,7 @@ def register_blueprints(app):
     app.register_blueprint(rooms_bp)
     app.register_blueprint(rooms_items_bp)
     app.register_blueprint(categories_bp)
+    app.register_blueprint(product_suggestions_bp)
 
 
 def configure_schedulers(app):

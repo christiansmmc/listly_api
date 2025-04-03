@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-
+from flask_jwt_extended import jwt_required
 from flaskr.services.product_suggestion import find_product_suggestions
 from flaskr.schemas.product_suggestion import product_suggestions_schema
 
@@ -7,6 +7,7 @@ product_suggestions_bp = Blueprint('product_suggestions', __name__, url_prefix='
 
 
 @product_suggestions_bp.get('')
+@jwt_required()
 def get_product_suggestions():
     """Retorna sugestões de produtos baseado no texto de busca."""
     query_text = request.args.get('q', '')

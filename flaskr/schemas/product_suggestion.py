@@ -5,7 +5,7 @@ from flaskr.models import ProductSuggestion
 class ProductSuggestionSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = ProductSuggestion
-        fields = ('id', 'name', 'category_id')
+        fields = ('name', 'category_id')
 
 
 product_suggestions_schema = ProductSuggestionSchema(many=True) 

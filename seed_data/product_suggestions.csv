@@ -1,101 +1,101 @@
-id,name
-1,Arroz
-2,Feijão
-3,Macarrão
-4,Açúcar
-5,Sal
-6,Café
-7,Leite
-8,Óleo de soja
-9,Azeite de oliva
-10,Ovos
-11,Farinha de trigo
-12,Farinha de mandioca
-13,Pão francês
-14,Pão de forma
-15,Queijo muçarela
-16,Presunto
-17,Manteiga
-18,Margarina
-19,Requeijão
-20,Peito de frango
-21,Carne moída
-22,Costela bovina
-23,Filé mignon
-24,Coxão mole
-25,Linguiça
-26,Salsicha
-27,Bacon
-28,Iogurte
-29,Maçã
-30,Banana
-31,Laranja
-32,Mamão
-33,Melancia
-34,Abacaxi
-35,Uva
-36,Pera
-37,Melão
-38,Alface
-39,Tomate
-40,Cebola
-41,Alho
-42,Cenoura
-43,Batata
-44,Batata doce
-45,Pimentão
-46,Repolho
-47,Couve
-48,Brócolis
-49,Pepino
-50,Abobrinha
-51,Berinjela
-52,Beterraba
-53,Milho verde
-54,Ervilha
-55,Feijão verde
-56,Lentilha
-57,Grão de bico
-58,Molho de tomate
-59,Extrato de tomate
-60,Maionese
-61,Ketchup
-62,Mostarda
-63,Vinagre
-64,Biscoito
-65,Bolacha
-66,Chocolate
-67,Bombom
-68,Sorvete
-69,Refrigerante
-70,Suco
-71,Água mineral
-72,Cerveja
-73,Vinho
-74,Whisky
-75,Cachaça
-76,Sabão em pó
-77,Sabão em barra
-78,Detergente
-79,Desinfetante
-80,Água sanitária
-81,Amaciante
-82,Papel higiênico
-83,Papel toalha
-84,Guardanapo
-85,Sabonete
-86,Shampoo
-87,Condicionador
-88,Creme dental
-89,Escova de dentes
-90,Fio dental
-91,Desodorante
-92,Absorvente
-93,Fraldas
-94,Lenço umedecido
-95,Algodão
-96,Cotonete
-97,Achocolatado
-98,Aveia
-99,Granola
-100,Cereal matinal 
+id,name,category_id
+1,Arroz,12
+2,Feijão,12
+3,Macarrão,6
+4,Açúcar,13
+5,Sal,7
+6,Café,4
+7,Leite,5
+8,Óleo de soja,7
+9,Azeite de oliva,7
+10,Ovos,3
+11,Farinha de trigo,12
+12,Farinha de mandioca,12
+13,Pão francês,6
+14,Pão de forma,6
+15,Queijo muçarela,5
+16,Presunto,3
+17,Manteiga,5
+18,Margarina,5
+19,Requeijão,5
+20,Peito de frango,3
+21,Carne moída,3
+22,Costela bovina,3
+23,Filé mignon,3
+24,Coxão mole,3
+25,Linguiça,3
+26,Salsicha,3
+27,Bacon,3
+28,Iogurte,5
+29,Maçã,1
+30,Banana,1
+31,Laranja,1
+32,Mamão,1
+33,Melancia,1
+34,Abacaxi,1
+35,Uva,1
+36,Pera,1
+37,Melão,1
+38,Alface,2
+39,Tomate,2
+40,Cebola,2
+41,Alho,7
+42,Cenoura,2
+43,Batata,2
+44,Batata doce,2
+45,Pimentão,2
+46,Repolho,2
+47,Couve,2
+48,Brócolis,2
+49,Pepino,2
+50,Abobrinha,2
+51,Berinjela,2
+52,Beterraba,2
+53,Milho verde,2
+54,Ervilha,12
+55,Feijão verde,2
+56,Lentilha,12
+57,Grão de bico,12
+58,Molho de tomate,7
+59,Extrato de tomate,7
+60,Maionese,7
+61,Ketchup,7
+62,Mostarda,7
+63,Vinagre,7
+64,Biscoito,11
+65,Bolacha,11
+66,Chocolate,13
+67,Bombom,13
+68,Sorvete,13
+69,Refrigerante,4
+70,Suco,4
+71,Água mineral,4
+72,Cerveja,4
+73,Vinho,4
+74,Whisky,4
+75,Cachaça,4
+76,Sabão em pó,9
+77,Sabão em barra,9
+78,Detergente,9
+79,Desinfetante,9
+80,Água sanitária,9
+81,Amaciante,9
+82,Papel higiênico,8
+83,Papel toalha,9
+84,Guardanapo,14
+85,Sabonete,8
+86,Shampoo,8
+87,Condicionador,8
+88,Creme dental,8
+89,Escova de dentes,8
+90,Fio dental,8
+91,Desodorante,8
+92,Absorvente,8
+93,Fraldas,8
+94,Lenço umedecido,8
+95,Algodão,8
+96,Cotonete,8
+97,Achocolatado,4
+98,Aveia,12
+99,Granola,12
+100,Cereal matinal,12

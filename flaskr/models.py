@@ -1,17 +1,17 @@
 from datetime import timedelta
 
+import unicodedata
+
 from flaskr.config.db import db
 from flaskr.utils import get_current_time
-import unicodedata
 
 
 def normalize_text(text):
-    """Remove acentos e converte para minúsculas."""
     if not text:
         return ""
     text = text.lower()
     return ''.join(c for c in unicodedata.normalize('NFD', text)
-                  if unicodedata.category(c) != 'Mn')
+                   if unicodedata.category(c) != 'Mn')
 
 
 class BaseModel(db.Model):
@@ -70,11 +70,9 @@ class ProductSuggestion(BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False, unique=True)
     normalized_name = db.Column(db.String(255), nullable=False, index=True)
-    
-    def __init__(self, name, **kwargs):
-        super(ProductSuggestion, self).__init__(**kwargs)
-        self.name = name
-        self.normalized_name = normalize_text(name)
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=True)
+
+    category = db.relationship('Category', backref='product_suggestions', lazy=True)
 
 
 class RoomAccess(BaseModel):

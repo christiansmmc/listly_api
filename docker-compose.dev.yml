@@ -1,0 +1,10 @@
+services:
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: listly
+      MYSQL_DATABASE: listly
+      MYSQL_USER: listly
+      MYSQL_PASSWORD: listly
+    ports:
+      - "3306:3306"
